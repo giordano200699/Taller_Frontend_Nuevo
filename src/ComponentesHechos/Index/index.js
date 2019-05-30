@@ -24,6 +24,7 @@ import Periodos from './../../ComponentesConst/Periodo';
 let opcionGlobal = 1;
 let AnioIni = 2014;
 let AnioFin = 2018;
+let Grafico = "columnMulti";
 
 
 class Index extends Component {
@@ -43,6 +44,7 @@ class Index extends Component {
         this.handleChangePeriodo = this.handleChangePeriodo.bind(this);
         this.handleChangeAnioIni = this.handleChangeAnioIni.bind(this);
         this.handleChangeAnioFin = this.handleChangeAnioFin.bind(this);
+        this.handleChangeGrafico = this.handleChangeGrafico.bind(this);
 
     }
 
@@ -62,14 +64,17 @@ class Index extends Component {
     handleApretarBoton(event){
         let opcion = this.state.opcionFiltro;
         opcionGlobal = this.state.opcion;
+
         if(opcion == 'periodo'){
-            //console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+            //console.log("GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
             AnioIni = this.state.periodo;
             AnioFin = this.state.periodo;
+            Grafico = this.state.grafico;
         }else{
             //console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
             AnioIni = this.state.anioini;
             AnioFin = this.state.aniofin;
+            Grafico = this.state.grafico;
         }
 
     }
@@ -105,6 +110,13 @@ class Index extends Component {
             });
         }
     }
+
+    handleChangeGrafico(event) { // cambiar grafico
+        this.setState({
+            grafico: event.target.value
+        });
+    }
+
 
     render() {
         const op = this.state.opcionFiltro;
@@ -152,6 +164,14 @@ class Index extends Component {
                                     </div>
                                 ) : (null)}
                                 
+                                <div className="form-group">
+                                    <label>Tipo de grafica:</label>
+                                    <select className="form-control" value={this.state.grafico} onChange={this.props.cambioGrafico}>
+                                        <option value="columnMulti">Column Multi</option>
+                                        <option value="stackedColumn100">Stacked Column</option>
+                                    </select>
+                                </div>
+
                                 <button className="btn btn-success btn-block" onClick={this.handleApretarBoton}><Link to="/" className="btn btn-success btn-block" >Generar Gráfica</Link></button>
                             
                             </Tab>
@@ -174,17 +194,18 @@ class Index extends Component {
 
     
 }
+
 function miFuncion(){
     if(opcionGlobal == 1){
-        return(<DemandaSocial  anioIni={AnioIni} anioFin ={AnioFin} />)
+        return(<DemandaSocial  anioIni={AnioIni} anioFin ={AnioFin} graficoMF={Grafico}/>)
     }else if(opcionGlobal == 2){
-        return(<Movilidad />)
+        return(<Movilidad anioIni={AnioIni} anioFin ={AnioFin} graficoMF={Grafico}/>)
     }else if(opcionGlobal == 3){
-        return(<RelacionAlumnos anioIni={AnioIni} anioFin = {AnioFin}/>)
+        return(<RelacionAlumnos anioIni={AnioIni} anioFin ={AnioFin} graficoMF={Grafico}/>)
     }else if(opcionGlobal == 4){
-        return(<ProgramaAlumnos  anioIni={AnioIni} anioFin = {AnioFin} />)
+        return(<ProgramaAlumnos anioIni={AnioIni} anioFin ={AnioFin} graficoMF={Grafico}/>)
     }else{
-        return(<PoblacionEstudiantil  anioIni={AnioIni} anioFin = {AnioFin} />)
+        return(<PoblacionEstudiantil  anioIni={AnioIni} anioFin ={AnioFin} graficoMF={Grafico}/>)
     }
     
 }
