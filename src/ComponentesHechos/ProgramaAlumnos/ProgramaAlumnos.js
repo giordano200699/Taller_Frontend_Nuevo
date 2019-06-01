@@ -67,11 +67,17 @@ class ProgramaAlumnos extends Component {
             var cadena2 = '';
 
             for(var tipo in result){
-                for(var anio in result[tipo]){  
-                    cadena += '<tr><td>'+tipo+'</td><td>'+anio+'</td>';
-                    for(var factor in result[tipo][anio]){
-                        
+                var contador = 1;
+                
+                for(var anio in result[tipo]){
+                    if(contador==1){
+                        cadena += '<tr><td style="vertical-align: middle;" rowspan="'+Object.keys(result[tipo]).length+'">'+tipo+'</td>';
+                    }else{
+                        cadena += '<tr>';
                     }
+                     
+                    cadena += '<td>'+anio+'</td>';
+                    
                     for(var i = this.state.anioini;i<=this.state.aniofin;i++){
                         if(result[tipo][anio][i]){
                             cadena+='<td>'+result[tipo][anio][i]+'</td>';
@@ -80,6 +86,7 @@ class ProgramaAlumnos extends Component {
                         }
                     }
                     cadena+='</tr>';
+                    contador++;
                 }
             }
 
