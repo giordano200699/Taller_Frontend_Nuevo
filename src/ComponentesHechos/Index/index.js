@@ -132,10 +132,10 @@ class Index extends Component {
                                     <label>Tipo:</label>
                                     <select className="form-control" value={this.state.opcion} onChange={this.handleChangeOpcion}>
                                         <option value="1">Demanda Social</option>
-                                        <option value="2">Movilidad</option>
                                         <option value="3">Relación de Alumnos</option>
                                         <option value="4">Programa Alumnos</option>
                                         <option value="5">Población Estudiantil</option>
+                                        <option disabled value="2">Movilidad</option>
                                     </select>
                                 </div>
 
