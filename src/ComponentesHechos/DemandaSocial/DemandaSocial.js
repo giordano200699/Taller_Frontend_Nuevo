@@ -1,10 +1,3 @@
-
-
-
-
-
-
-
 /* App.js */
 
 import React, { Component } from 'react';
@@ -55,10 +48,18 @@ class DemandaSocial extends Component {
             miHtml2:'',
             imagen: null,
             cargoImagen:false,
-            esVisible:false
+            esVisible:false, 
+            htmlGrafica: '',
+            banderaCarga : false,
+
+            graficasCargadas : false,
+            inicioRelativo : ''+this.props.anioIni,
+            finRelativo: ''+this.props.anioFin,
         };
         this.miFuncion = this.miFuncion.bind(this);
         this.miFuncion();
+        this.miFuncion2 = this.miFuncion2.bind(this);
+        this.miFuncion2();
 
     }
 
@@ -99,62 +100,91 @@ class DemandaSocial extends Component {
 
             for(var i = this.state.anioini;i<=this.state.aniofin;i++){
                 cadena2+='<th>'+i+'</th>';
+
+
             }
+
 
             //console.log(result);
             this.setState({
                 isChartLoaded : true,
                 miHtml:cadena2,
                 miHtml2:cadena,
-                data: {
-                    title: {
-                        text: "Programa Alumnos"
-                    },
-                    data: [
-                    {
-                        // Change type to "doughnut", "line", "splineArea", etc.
-                        type: "column",
-                        dataPoints: [
-                            { label: "DSI",  y: 38  },
-                            { label: "GTIC", y: 41  },
-                            { label: "ISW", y: 32  },
-                            { label: "DGTI", y: 29  },
-                            { label: "GIC",  y: 33  },
-                            { label: "GTI",  y: 30  },
-                            { label: "GPTI",  y: 46  },
-                            { label: "ASTI",  y: 42  }
-                        ]
-                    },
-                    {
-                        // Change type to "doughnut", "line", "splineArea", etc.
-                        type: "column",
-                        dataPoints: [
-                            { label: "DSI",  y: 17  },
-                            { label: "GTIC", y: 22  },
-                            { label: "ISW", y: 17  },
-                            { label: "DGTI", y: 12  },
-                            { label: "GIC",  y: 15  },
-                            { label: "GTI",  y: 11  },
-                            { label: "GPTI",  y: 28  },
-                            { label: "ASTI",  y: 20  }
-                        ]
-                    },
-                    {
-                        // Change type to "doughnut", "line", "splineArea", etc.
-                        type: "column",
-                        dataPoints: [
-                            { label: "DSI",  y: 9  },
-                            { label: "GTIC", y: 11  },
-                            { label: "ISW", y: 7  },
-                            { label: "DGTI", y: 4  },
-                            { label: "GIC",  y: 9  },
-                            { label: "GTI",  y: 9  },
-                            { label: "GPTI",  y: 7  },
-                            { label: "ASTI",  y: 12  }
-                        ]
-                    }
-                    ]
+            });
+        })
+    }
+
+    miFuncion2(){
+        
+        fetch('http://tallerbackend.herokuapp.com/ApiController/programaAlumnosInverso?fecha_inicio='+this.state.anioini+'&fecha_fin='+this.state.aniofin)
+        .then((response)=>{
+            return response.json();
+        })
+        .then((result2)=>{
+
+            var arregloData = [];
+            
+            var bandera = false;
+            var anioInicioRelativo; 
+            var anioUltimoRelativo;
+            for(var anio in result2){
+                if(!bandera){
+                    anioInicioRelativo = anio;
+                    bandera = true;
                 }
+                anioUltimoRelativo = anio;
+                var nuevaData = [];
+
+                for(var estado in result2[anio]){
+                    var miniArreglo = [];
+                    for(var tipo in result2[anio][estado]){
+                        miniArreglo.push({ label: tipo, y: result2[anio][estado][tipo] });
+                    }
+                    nuevaData.push({
+                        type: "column",
+                        name: estado,
+                        legendText: estado,
+                        showInLegend: true, 
+                        dataPoints:miniArreglo
+                    });
+                }
+
+                arregloData.push(
+                    {
+                        animationEnabled: true,
+                        title:{
+                            text: "Demanda Social - "+anio
+                        },	
+                        axisY: {
+                            title: "Número de Alumnos",
+                            titleFontColor: "#4F81BC",
+                            lineColor: "#4F81BC",
+                            labelFontColor: "#4F81BC",
+                            tickColor: "#4F81BC"
+                        },	
+                        toolTip: {
+                            shared: true
+                        },
+                        legend: {
+                            cursor:"pointer"
+                        },
+                        data: nuevaData
+                    }
+                );
+
+            }
+
+
+            //console.log(result);
+            this.setState({
+                data: arregloData,
+                inicioRelativo: anioInicioRelativo,
+                finRelativo: anioUltimoRelativo
+
+            },()=>{
+                this.setState({
+                    graficasCargadas:true
+                });
             });
         })
     }
@@ -164,13 +194,41 @@ class DemandaSocial extends Component {
         if(this.props.anioFin!=this.state.aniofin || this.props.anioIni!=this.state.anioini){
             this.setState({
                 aniofin: this.props.anioFin,
-                anioini: this.props.anioIni
+                anioini: this.props.anioIni,
+                banderaCarga:false,
+                graficasCargadas:false
             },() => {
                 this.miFuncion();
+                this.miFuncion2();
             });
         }
         
+        if(this.state.isChartLoaded && this.state.graficasCargadas && Object.keys(this.state.data).length!=0  && this.state.banderaCarga != this.state.isChartLoaded){
+            let etiqueta = []
+            var iterador = 0;
+            for(var i = this.state.inicioRelativo;i<=this.state.finRelativo;i++){
+                etiqueta.push(
+                    <div class="panel row align-items-center">
+                        <div class="panel-body col-md-11 mr-md-auto ml-md-auto" style={{marginBottom: 50}}>
+                            <CanvasJSChart options = {this.state.data[iterador]} />
+                        </div>           
+                    </div>
+                );
+                iterador++;
+            }
+            
+            this.setState({
+                htmlGrafica: etiqueta,
+                banderaCarga: true
+            },()=>{
+                //alert(this.state.htmlGrafica);
+            })
+        }
+        
+        
         return (
+
+            
 
         <div>
             
@@ -195,14 +253,7 @@ class DemandaSocial extends Component {
                         </div>
                     </Tab>
                     <Tab label="Grafico">
-                    <div class="panel row align-items-center">
-                        <div class="panel-heading mt-3 mb-3">
-                            <h4 class="panel-title titulo">Grafica de Población Estudiantil</h4>
-                        </div>
-                        <div class="panel-body col-md-11 mr-md-auto ml-md-auto">
-                            <CanvasJSChart options = {(this.state.isChartLoaded) ? this.state.data : (null)} />
-                        </div>           
-                    </div>
+                        {this.state.banderaCarga? this.state.htmlGrafica : null}
                     </Tab>
 
                     <Tab label="Visualizar PDF" >

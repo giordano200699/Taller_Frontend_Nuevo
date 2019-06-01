@@ -20,6 +20,7 @@ import ProgramaAlumnos from './../ProgramaAlumnos/ProgramaAlumnos';
 import PoblacionEstudiantil from './../PoblacionEstudiantil/PoblacionEstudiantil';
 import SelectAnios from './../../ComponentesConst/SeleccionAnios';
 import Periodos from './../../ComponentesConst/Periodo';
+import Parser from 'html-react-parser';
 
 let opcionGlobal = 1;
 let AnioIni = 2014;
@@ -36,7 +37,8 @@ class Index extends Component {
             opcionFiltro:'intervalo',
             periodo:2009,
             anioini:2014,
-            aniofin:2018
+            aniofin:2018,
+            htmlGrafica:''
         };
         this.handleChangeOpcion = this.handleChangeOpcion.bind(this);
         this.handleChangeOpcionFiltro = this.handleChangeOpcionFiltro.bind(this);
@@ -45,7 +47,9 @@ class Index extends Component {
         this.handleChangeAnioIni = this.handleChangeAnioIni.bind(this);
         this.handleChangeAnioFin = this.handleChangeAnioFin.bind(this);
         this.handleChangeGrafico = this.handleChangeGrafico.bind(this);
-
+        this.state.htmlGrafica = '<option value="columnasMultiples">Columnas Mútliples</option>';
+        this.state.htmlGrafica +='<option value="barrasHMultiples">Barras H Múltiples</option>';
+        this.state.htmlGrafica +='<option value="splineMultiple">Spline Múltiple</option>';
     }
 
     handleChangeOpcion(event) { // cambiar opcion
@@ -167,8 +171,7 @@ class Index extends Component {
                                 <div className="form-group">
                                     <label>Tipo de grafica:</label>
                                     <select className="form-control" value={this.state.grafico} onChange={this.props.cambioGrafico}>
-                                        <option value="columnMulti">Column Multi</option>
-                                        <option value="stackedColumn100">Stacked Column</option>
+                                        {Parser(this.state.htmlGrafica)}  
                                     </select>
                                 </div>
 
