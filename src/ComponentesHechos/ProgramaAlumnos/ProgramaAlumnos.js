@@ -1,13 +1,17 @@
 /* App.js */
 
 import React, { Component } from 'react';
+import {Tabs, Tab} from 'react-bootstrap-tabs';
 import CanvasJSReact, {CanvasJS} from './../../canvasjs.react';
+import Parser from 'html-react-parser';
+import Pdf from '../Pdf/pdf';
+import html2canvas from 'html2canvas';
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 class ProgramaAlumnos extends Component {
 
-    constructor(){//constructor inicial
-        super();
+    constructor(props){//constructor inicial
+        super(props);
         this.state = {
             isUsed:false, //usado para saber si las aplicacion es usada
             showPopover: false, //usado para mostrar o no el popup
@@ -24,8 +28,8 @@ class ProgramaAlumnos extends Component {
             fechaInicio: '1420243200', //usado para la fecha inicial del cuadro
             fechaFin: '1420502400', //usado para la fecha final del cuadro
             grafico : 'column2d', //usado para el tipo de grafico del cuadro
-            anioini : '2015', //usado para el año inicial del cuadro
-            aniofin : '2015', //usado para el año final del cuadro
+            anioini : ''+this.props.anioIni, //usado para el año inicial del cuadro
+            aniofin : ''+this.props.anioFin, //usado para el año final del cuadro
             anio: '2015', //usado para el año a biscar con el intervalo del mes
             mesini : '1', //usado para el mes inicial del cuadro
             mesfin : '12', //usado para el mes final del cuadro/grafico
@@ -39,7 +43,12 @@ class ProgramaAlumnos extends Component {
             todosConceptos : [], //usado para saber todos los conceptos que hay en la BD en otro tipo formato de dato
             usuario : '', //usado para la sesion del usuario
             listaConceptosEncontrados : "", //usado para saber que conceptos se encontraron en la consulta,
-            data: {}
+            data: {},
+            miHtml: '',
+            miHtml2:'',
+            imagen: null,
+            cargoImagen:false,
+            esVisible:false
         };
         this.miFuncion = this.miFuncion.bind(this);
         this.miFuncion();
@@ -48,15 +57,26 @@ class ProgramaAlumnos extends Component {
 
 
     miFuncion(){
-        fetch('http://tallerbackend.herokuapp.com/ApiController/listaConceptos?fecha_inicio=2002&fecha_fin=2004')//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
+        fetch('http://tallerbackend.herokuapp.com/ApiController/programaAlumnos?fecha_inicio='+this.state.anioini+'&fecha_fin='+this.state.aniofin)//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
         .then((response)=>{
             return response.json();
         })
         .then((result)=>{
 
+            var cadena = '';
+
+            for(var tipo in result){
+                for(var anio in result[tipo]){  
+                    for(var factor in result[tipo][anio]){
+                        cadena += '<tr><td>'+tipo+'</td><td>'+anio+'</td><td>'+factor+'</td><td>'+result[tipo][anio][factor]+'</td></tr>'
+                    }
+                }
+            }
+
             //console.log(result);
             this.setState({
                 isChartLoaded : true,
+                miHtml2:cadena,
                 data: {
                     title: {
                         text: "Programa Alumnos"
@@ -111,11 +131,63 @@ class ProgramaAlumnos extends Component {
     }
 
     render() {
+
+        if(this.props.anioFin!=this.state.aniofin || this.props.anioIni!=this.state.anioini){
+            this.setState({
+                aniofin: this.props.anioFin,
+                anioini: this.props.anioIni
+            },() => {
+                this.miFuncion();
+            });
+        }
         
         return (
 
         <div>
-            <CanvasJSChart options = {(this.state.isChartLoaded) ? this.state.data : (null)} />
+            
+            <Tabs align="center" >
+                    <Tab label="Tabla">
+                        <div class="panel row align-items-center">
+                            <div class="panel-heading mt-3 mb-3">
+                                <h4 class="panel-title titulo">Tabla de Población Estudiantil</h4>
+                            </div>
+                            <table className="table table-bordered table-striped col-md-11 mr-md-auto greenTable">
+                                <thead>
+                                    {/*Parser(this.state.miHtml)*/}  
+                                    <th>Etiqueta</th>
+                                    <th>Año</th>
+                                    <th>Estado</th>
+                                    <th>Cantidad</th>
+                                </thead>
+                                <tbody>
+                                    {Parser(this.state.miHtml2)}                            
+                                </tbody>
+                            </table>          
+                        </div>
+                    </Tab>
+                    <Tab label="Grafico">
+                    <div class="panel row align-items-center">
+                        <div class="panel-heading mt-3 mb-3">
+                            <h4 class="panel-title titulo">Grafica de Población Estudiantil</h4>
+                        </div>
+                        <div class="panel-body col-md-11 mr-md-auto ml-md-auto">
+                            <CanvasJSChart options = {(this.state.isChartLoaded) ? this.state.data : (null)} />
+                        </div>           
+                    </div>
+                    </Tab>
+
+                    <Tab label="Visualizar PDF" >
+                        <div className="panel row align-items-center" >
+                            <div className="panel-heading mt-3 mb-3">
+                                <h4 style={{marginLeft:60}} className="titulo titulo">Visualizar PDF</h4>
+                            </div>
+                            <div className="panel-body col-md-11 mr-md-auto ml-md-auto">
+                                {this.state.cargoImagen?<Pdf imagen={this.state.imagen}></Pdf>:null}
+                                
+                            </div>           
+                        </div>
+                    </Tab>
+                </Tabs>
         </div>
         );
     }
