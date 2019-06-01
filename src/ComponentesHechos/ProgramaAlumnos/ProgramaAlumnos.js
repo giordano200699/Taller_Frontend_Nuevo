@@ -64,18 +64,33 @@ class ProgramaAlumnos extends Component {
         .then((result)=>{
 
             var cadena = '';
+            var cadena2 = '';
 
             for(var tipo in result){
                 for(var anio in result[tipo]){  
+                    cadena += '<tr><td>'+tipo+'</td><td>'+anio+'</td>';
                     for(var factor in result[tipo][anio]){
-                        cadena += '<tr><td>'+tipo+'</td><td>'+anio+'</td><td>'+factor+'</td><td>'+result[tipo][anio][factor]+'</td></tr>'
+                        
                     }
+                    for(var i = this.state.anioini;i<=this.state.aniofin;i++){
+                        if(result[tipo][anio][i]){
+                            cadena+='<td>'+result[tipo][anio][i]+'</td>';
+                        }else{
+                            cadena+='<td>0</td>';
+                        }
+                    }
+                    cadena+='</tr>';
                 }
+            }
+
+            for(var i = this.state.anioini;i<=this.state.aniofin;i++){
+                cadena2+='<th>'+i+'</th>';
             }
 
             //console.log(result);
             this.setState({
                 isChartLoaded : true,
+                miHtml:cadena2,
                 miHtml2:cadena,
                 data: {
                     title: {
@@ -153,11 +168,11 @@ class ProgramaAlumnos extends Component {
                             </div>
                             <table className="table table-bordered table-striped col-md-11 mr-md-auto greenTable">
                                 <thead>
-                                    {/*Parser(this.state.miHtml)*/}  
+                                     
                                     <th>Etiqueta</th>
-                                    <th>Año</th>
-                                    <th>Estado</th>
-                                    <th>Cantidad</th>
+                                    <th>Astado</th>
+                                    {Parser(this.state.miHtml)} 
+                                    
                                 </thead>
                                 <tbody>
                                     {Parser(this.state.miHtml2)}                            
