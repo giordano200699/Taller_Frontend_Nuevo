@@ -70,7 +70,7 @@ class DemandaSocial extends Component {
             subtitulo: 'DEL 03/01/2015 AL 06/01/2015', //usado para el subtitulo del cuadro
             fechaInicio: '1420243200', //usado para la fecha inicial del cuadro
             fechaFin: '1420502400', //usado para la fecha final del cuadro
-            grafico : 'column2d', //usado para el tipo de grafico del cuadro
+            grafico : ''+this.props.graficoMF, //usado para el tipo de grafico del cuadro
             anioini : ''+this.props.anioIni, //usado para el año inicial del cuadro
             aniofin : ''+this.props.anioFin, //usado para el año final del cuadro
             anio: '2015', //usado para el año a biscar con el intervalo del mes
@@ -99,6 +99,14 @@ class DemandaSocial extends Component {
             key:"1",
             esVisible:false
         };
+
+        
+        this.myStackedColumn100 = this.myStackedColumn100.bind(this);
+        this.myColumnMulti = this.myColumnMulti.bind(this);
+        
+        this.myGeneradorGrafica = this.myGeneradorGrafica.bind(this);
+
+
         this.miFuncion = this.miFuncion.bind(this);
         this.miFuncion();
 
@@ -274,6 +282,220 @@ class DemandaSocial extends Component {
 
     }
 
+    
+    myGeneradorGrafica(){
+        
+        if(this.state.grafico === 'columnMulti'){
+            this.myColumnMulti();
+            console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        }
+        else if (this.state.grafico === 'stackedColumn100') {
+            this.myStackedColumn100();
+            console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
+        }
+    
+        fetch('http://tallerbackend.herokuapp.com/ApiController/demandaSocial?fecha_inicio='+this.state.anioini+'&fecha_fin='+this.state.aniofin)//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
+        .then((response)=>{
+            return response.json();
+        })
+        .then((result)=>{
+            //result = JSON.parse(result);
+
+            //console.log(result);
+            let cadena="";
+            let leyenda = "";
+            let cadenaFooter = "";
+            var totalD=0;
+            var totalA = [];
+            var bandera = false;
+            var totalTotal = 0;
+            var cadenaAnios = '';
+
+            for(var i=parseInt(this.state.anioini);i<=parseInt(this.state.aniofin);i++){
+                cadenaAnios += '<th><b>'+i+'</b></th>';
+            }
+
+            for(var i in result) {
+                if(bandera==false){
+                    bandera=true;
+                    for(var j in result[i]){
+                        totalA[j]=0;
+                    }
+                }
+                totalD=0;
+                cadena = cadena + "<tr><td>"+ i +"</td>";
+
+                for(var j in result[i]){
+                    if(result[i][j]==0){
+                        cadena = cadena+"<td></td>";
+                    }else{
+                        cadena = cadena+"<td>"+result[i][j]+"</td>";
+                        totalD = totalD + result[i][j];
+                        totalA[j]=totalA[j]+result[i][j];
+                } 
+               }
+               cadena = cadena + "<td>"+totalD+"</td>";
+               totalTotal= totalTotal + totalD;
+            }
+            //cadena = cadena + "<tfoot><tr><td><b>Total General</b></td>";
+            cadenaFooter = cadenaFooter + "<tr><td><b>Total General</b></td>";
+            for(var i in totalA){
+                //cadena = cadena+"<td><b>"+totalA[i]+"</b></td>";
+                cadenaFooter = cadenaFooter + "<td><b>"+totalA[i]+"</b></td>";
+            }
+            //cadena = cadena + "<td><b>"+totalTotal+"</b></td></tfoot>";
+            cadenaFooter = cadenaFooter +  "<td><b>"+totalTotal+"</b></td>";
+            
+            //Aqui se llena los datos de la leyenda
+            leyenda += "<hr></hr>"
+            leyenda += "<h5 className='leyenda'><tr><td>ASTI: AUDITORIA Y SEGURIDAD DE TECNOLOGIA DE INFORMACION</td></h5>";
+            leyenda += "<h5 className='leyenda'><tr><td>DISI: DOCTORADO EN INGENIERIA DE SISTEMAS E INFORMATICA</td></h5>";
+            leyenda += "<h5 className='leyenda'><tr><td>GIC: GESTION DE LA INFORMACION Y DEL CONOCIMIENTO</td></h5>";
+            leyenda += "<h5 className='leyenda'><tr><td>GPTI: GERENCIA DE PROYECTOS DE TECNOLOGIA DE INFORMACION</td></h5>";
+            leyenda += "<h5 className='leyenda'><tr><td>GTI: GOBIERNO DE TECNOLOGIAS DE INFORMACION</td></h5>";
+            leyenda += "<h5 className='leyenda'><tr><td>GTIC: GESTION DE TECNOLOGIA DE INFORMACION Y COMUNICACIONES</td></h5>";
+            leyenda += "<h5 className='leyenda'><tr><td>ISW: INGENIERIA DE SOFTWARE</td></h>";
+
+            this.setState({
+                miHtml: cadena,
+                cadenaAnios:cadenaAnios,
+                miLeyenda: leyenda,
+                tablaFooter: cadenaFooter,
+                esVisible:true
+            });
+            const input = document.getElementById('tabla');
+            
+            html2canvas(input)
+            .then((canvas) => {
+                const imgData = canvas.toDataURL('image/png');
+                this.setState({
+                    imagen : imgData,
+                    cargoImagen:true
+                });
+                
+                
+            });
+            
+            
+        })
+
+    }
+
+    myColumnMulti(){
+        
+        ///hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
+        fetch('http://tallerbackend.herokuapp.com/ApiController/listaConceptos?fecha_inicio='+this.state.anioini+'&fecha_fin='+this.state.aniofin)
+        .then((response)=>{
+            return response.json();
+        })
+        .then((result)=>{
+
+            var miContador = this.state.anioini;
+            var resultado =[];
+           for (let fila of result) {
+                console.log(fila);
+                fila.name=''+miContador;
+                fila.showInLegend=true;
+                miContador++;
+                //resultado.push
+            }
+
+            console.log(result);
+
+            this.setState({
+                isChartLoaded : true,
+                data: {
+                    title: {
+                        text: "Demanda Social"
+                    },
+                    data: result
+                }
+            });
+
+            const input2 = document.getElementById('graficax');
+            html2canvas(input2)
+            .then((canvas2) => {
+                const imgData2 = canvas2.toDataURL('image/png');
+                this.setState({
+                    imagen2 : imgData2,
+                    cargoImagen2:true
+                },()=>{
+                    this.setState({
+                        esVisible:false
+                    });
+                });
+                
+                
+            });
+        })
+
+    }
+     
+    myStackedColumn100(){
+
+       //Hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
+        fetch('http://tallerbackend.herokuapp.com/ApiController/listaConceptos?fecha_inicio='+this.state.anioini+'&fecha_fin='+this.state.aniofin)
+        .then((response)=>{
+            return response.json();
+        })
+        .then((result)=>{
+
+            var miContador = this.state.anioini;
+            var resultado =[];
+            
+            for (let fila of result) {
+                console.log(fila);
+                fila.name=''+miContador;
+                fila.showInLegend=true;
+                miContador++;
+                //resultado.push
+            }
+
+            cambiarValor(result, "type", "column", "stackedColumn100");
+
+            console.log(result);
+
+            this.setState({
+                isChartLoaded : true,
+                data: {
+                    animationEnabled: true,
+                    title: {
+                        text: "Demanda Social"
+                    },
+                    legend: {
+                        verticalAlign: "center",
+                        horizontalAlign: "right",
+                        reversed: true,
+                        cursor: "pointer",
+                            fontSize: 16,
+                            itemclick: this.toggleDataSeries
+                    },
+                    toolTip: {
+                        shared: true
+                    },
+                    data: result
+                }
+            });
+
+            const input2 = document.getElementById('graficax');
+            html2canvas(input2)
+            .then((canvas2) => {
+                const imgData2 = canvas2.toDataURL('image/png');
+                this.setState({
+                    imagen2 : imgData2,
+                    cargoImagen2:true
+                },()=>{
+                    this.setState({
+                        esVisible:false
+                    });
+                });
+                
+                
+            });
+        })
+
+    }
+
 
 
     render() {
@@ -414,4 +636,14 @@ class DemandaSocial extends Component {
         );
     }
 }
+
+
+function cambiarValor(my_array, valorABuscar, valorViejo, valorNuevo) {
+    my_array.forEach(function (elemento) { // recorremos el array
+       //asignamos el valor del elemento dependiendo del valor a buscar, validamos que el valor sea el mismo y se reemplaza con el nuevo. 
+      elemento[valorABuscar] = elemento[valorABuscar] == valorViejo ? valorNuevo : elemento[valorABuscar]
+    })
+  }
+
+
 export default DemandaSocial;
