@@ -55,11 +55,15 @@ class DemandaSocial extends Component {
             graficasCargadas : false,
             inicioRelativo : ''+this.props.anioIni,
             finRelativo: ''+this.props.anioFin,
+            tipoGrafica: 'column',
+            tipoGraficaVerificador : this.props.graficoMF
         };
         this.miFuncion = this.miFuncion.bind(this);
         this.miFuncion();
         this.miFuncion2 = this.miFuncion2.bind(this);
         this.miFuncion2();
+
+        
 
     }
 
@@ -127,6 +131,7 @@ class DemandaSocial extends Component {
             var bandera = false;
             var anioInicioRelativo; 
             var anioUltimoRelativo;
+            
             for(var anio in result2){
                 if(!bandera){
                     anioInicioRelativo = anio;
@@ -141,7 +146,7 @@ class DemandaSocial extends Component {
                         miniArreglo.push({ label: tipo, y: result2[anio][estado][tipo] });
                     }
                     nuevaData.push({
-                        type: "column",
+                        type: this.state.tipoGrafica,
                         name: estado,
                         legendText: estado,
                         showInLegend: true, 
@@ -191,12 +196,24 @@ class DemandaSocial extends Component {
 
     render() {
 
-        if(this.props.anioFin!=this.state.aniofin || this.props.anioIni!=this.state.anioini){
+        if(this.props.anioFin!=this.state.aniofin || this.props.anioIni!=this.state.anioini || this.state.tipoGraficaVerificador!=this.props.graficoMF){
+            var tipoCadena = '';
+            if(this.props.graficoMF=="columnasMultiples"){
+                tipoCadena = 'column';
+            }else if(this.props.graficoMF=="barrasHMultiples"){
+                tipoCadena = 'bar';
+            }else if(this.props.graficoMF=="splineMultiple"){
+                tipoCadena = 'spline';
+            }
+            
             this.setState({
                 aniofin: this.props.anioFin,
                 anioini: this.props.anioIni,
+                tipoGraficaVerificador: this.props.graficoMF,
+                tipoGrafica: tipoCadena,
                 banderaCarga:false,
                 graficasCargadas:false
+
             },() => {
                 this.miFuncion();
                 this.miFuncion2();

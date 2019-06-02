@@ -170,7 +170,7 @@ class Index extends Component {
                                 
                                 <div className="form-group">
                                     <label>Tipo de grafica:</label>
-                                    <select className="form-control" value={this.state.grafico} onChange={this.props.cambioGrafico}>
+                                    <select className="form-control" value={this.state.grafico} onChange={this.handleChangeGrafico}>
                                         {Parser(this.state.htmlGrafica)}  
                                     </select>
                                 </div>
