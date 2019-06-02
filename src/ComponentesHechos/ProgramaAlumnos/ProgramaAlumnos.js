@@ -76,6 +76,7 @@ class ProgramaAlumnos extends Component {
             leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>GTI: GOBIERNO DE TECNOLOGIAS DE INFORMACION</td></text></br>";
             leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>GPTI: GERENCIA DE PROYECTOS DE TECNOLOGIA DE INFORMACION</td></text></br>";            
             leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>ASTI: AUDITORIA Y SEGURIDAD DE TECNOLOGIA DE INFORMACION</td></text></br></br>";
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>AC: Activo</td></text></br></br>";
 
             leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>AC: Activo</td></text></br>";
             leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>G: Graduado</td></text></br>";
@@ -197,7 +198,7 @@ class ProgramaAlumnos extends Component {
                             {Parser(this.state.miLeyenda)} 
                             <hr></hr>
                             {aI == aF ? (<h4 className="titulo">Tabla de Datos - Población Estudiantil del año {this.props.anioIni}</h4>) : 
-                            (<h4 className="titulo">Tabla de Datos - Población Estudiantil del {this.props.anioIni} al {this.props.anioFin}</h4>)}
+                            (<h4 className="titulo">Tabla de Datos - Demanda Social del {this.props.anioIni} al {this.props.anioFin}</h4>)}
                         </div>  
                             <table className="table table-bordered table-striped col-md-11 mr-md-auto greenTable">
                                 <thead>
