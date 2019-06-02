@@ -48,6 +48,7 @@ class ProgramaAlumnos extends Component {
             miHtml2:'',
             imagen: null,
             cargoImagen:false,
+            miLeyenda: '',
             esVisible:false
         };
         this.miFuncion = this.miFuncion.bind(this);
@@ -65,6 +66,23 @@ class ProgramaAlumnos extends Component {
 
             var cadena = '';
             var cadena2 = '';
+
+            let leyenda = '';
+
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>DISI: DOCTORADO EN INGENIERIA DE SISTEMAS E INFORMATICA</td></text></br>";
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>GTIC: GESTION DE TECNOLOGIA DE INFORMACION Y COMUNICACIONES</td></text></br>";
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>ISW: INGENIERIA DE SOFTWARE</td></text></br>";
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>GIC: GESTION DE LA INFORMACION Y DEL CONOCIMIENTO</td></text></br>";
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>GTI: GOBIERNO DE TECNOLOGIAS DE INFORMACION</td></text></br>";
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>GPTI: GERENCIA DE PROYECTOS DE TECNOLOGIA DE INFORMACION</td></text></br>";            
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>ASTI: AUDITORIA Y SEGURIDAD DE TECNOLOGIA DE INFORMACION</td></text></br></br>";
+
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>AC: Activo</td></text></br>";
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>G: Graduado</td></text></br>";
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>RM: Reserva</td></text></br>";
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>INAC: Inactivo</td></text></br>";
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>AI: Ingreso Anulado</td></text></br>";
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>AC: Egresado</td></text>";
 
             for(var tipo in result){
                 var contador = 1;
@@ -91,7 +109,7 @@ class ProgramaAlumnos extends Component {
             }
 
             for(var i = this.state.anioini;i<=this.state.aniofin;i++){
-                cadena2+='<th>'+i+'</th>';
+                cadena2+='<th><h4>'+i+'</h4></th>';
             }
 
             //console.log(result);
@@ -99,6 +117,7 @@ class ProgramaAlumnos extends Component {
                 isChartLoaded : true,
                 miHtml:cadena2,
                 miHtml2:cadena,
+                miLeyenda: leyenda,
                 data: {
                     title: {
                         text: "Programa Alumnos"
@@ -162,6 +181,9 @@ class ProgramaAlumnos extends Component {
                 this.miFuncion();
             });
         }
+
+        const aI = this.props.anioIni;
+        const aF = this.props.anioFin;
         
         return (
 
@@ -170,14 +192,18 @@ class ProgramaAlumnos extends Component {
             <Tabs align="center" >
                     <Tab label="Tabla">
                         <div class="panel row align-items-center">
-                            <div class="panel-heading mt-3 mb-3">
-                                <h4 class="panel-title titulo">Tabla de Población Estudiantil</h4>
-                            </div>
+                        <div className="panel-heading mt-3 mb-3">
+                            <h5 className="titulo">LEYENDA: </h5>
+                            {Parser(this.state.miLeyenda)} 
+                            <hr></hr>
+                            {aI == aF ? (<h4 className="titulo">Tabla de Datos - Población Estudiantil del año {this.props.anioIni}</h4>) : 
+                            (<h4 className="titulo">Tabla de Datos - Población Estudiantil del {this.props.anioIni} al {this.props.anioFin}</h4>)}
+                        </div>  
                             <table className="table table-bordered table-striped col-md-11 mr-md-auto greenTable">
                                 <thead>
                                      
-                                    <th>Etiqueta</th>
-                                    <th>Astado</th>
+                                    <th> <h4>Programa</h4></th>
+                                    <th><h4>Estado</h4></th>
                                     {Parser(this.state.miHtml)} 
                                     
                                 </thead>

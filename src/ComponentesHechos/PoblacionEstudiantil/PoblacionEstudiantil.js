@@ -128,14 +128,21 @@ class PoblacionEstudiantil extends Component {
 
     render() {
         
+        const aI = this.props.anioIni;
+        const aF = this.props.anioFin;
+
         return (
             <div>
                 <Tabs align="center" >
                     <Tab label="Tabla">
                         <div class="panel row align-items-center">
-                            <div class="panel-heading mt-3 mb-3">
-                                <h4 class="panel-title titulo">Tabla de Población Estudiantil</h4>
-                            </div>
+                        <div className="panel-heading mt-3 mb-3">
+                            <h5 className="titulo">LEYENDA: </h5>
+                            {/*Parser(this.state.miLeyenda)*/}
+                            <hr></hr>
+                            {aI == aF ? (<h4 className="titulo">Tabla de Datos - Población Estudiantil del año {this.props.anioIni}</h4>) : 
+                            (<h4 className="titulo">Tabla de Datos - Poblacón Estudiantil del {this.props.anioIni} al {this.props.anioFin}</h4>)}
+                        </div> 
                             <table className="table table-bordered table-striped col-md-11 mr-md-auto greenTable">
                                 <thead>
                                     {Parser(this.state.miHtml)}  

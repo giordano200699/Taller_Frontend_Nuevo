@@ -213,7 +213,7 @@ class DemandaSocial extends Component {
             var cadenaAnios = '';
 
             for(var i=parseInt(this.state.anioini);i<=parseInt(this.state.aniofin);i++){
-                cadenaAnios += '<th><b>'+i+'</b></th>';
+                cadenaAnios += '<th><b><h4>'+i+'</h4></b></th>';
             }
 
             for(var i in result) {
@@ -249,13 +249,14 @@ class DemandaSocial extends Component {
             
             //Aqui se llena los datos de la leyenda
             leyenda += "<hr></hr>"
-            leyenda += "<h5 className='leyenda'><tr><td>ASTI: AUDITORIA Y SEGURIDAD DE TECNOLOGIA DE INFORMACION</td></h5>";
-            leyenda += "<h5 className='leyenda'><tr><td>DISI: DOCTORADO EN INGENIERIA DE SISTEMAS E INFORMATICA</td></h5>";
-            leyenda += "<h5 className='leyenda'><tr><td>GIC: GESTION DE LA INFORMACION Y DEL CONOCIMIENTO</td></h5>";
-            leyenda += "<h5 className='leyenda'><tr><td>GPTI: GERENCIA DE PROYECTOS DE TECNOLOGIA DE INFORMACION</td></h5>";
-            leyenda += "<h5 className='leyenda'><tr><td>GTI: GOBIERNO DE TECNOLOGIAS DE INFORMACION</td></h5>";
-            leyenda += "<h5 className='leyenda'><tr><td>GTIC: GESTION DE TECNOLOGIA DE INFORMACION Y COMUNICACIONES</td></h5>";
-            leyenda += "<h5 className='leyenda'><tr><td>ISW: INGENIERIA DE SOFTWARE</td></h5>";
+            
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>DISI: DOCTORADO EN INGENIERIA DE SISTEMAS E INFORMATICA</td></text></br>";
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>GTIC: GESTION DE TECNOLOGIA DE INFORMACION Y COMUNICACIONES</td></text></br>";
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>ISW: INGENIERIA DE SOFTWARE</td></text></br>";
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>GIC: GESTION DE LA INFORMACION Y DEL CONOCIMIENTO</td></text></br>";
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>GTI: GOBIERNO DE TECNOLOGIAS DE INFORMACION</td></text></br>";
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>GPTI: GERENCIA DE PROYECTOS DE TECNOLOGIA DE INFORMACION</td></text></br>";            
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>ASTI: AUDITORIA Y SEGURIDAD DE TECNOLOGIA DE INFORMACION</td></text>";
 
             this.setState({
                 miHtml: cadena,
@@ -348,13 +349,14 @@ class DemandaSocial extends Component {
             
             //Aqui se llena los datos de la leyenda
             leyenda += "<hr></hr>"
-            leyenda += "<h5 className='leyenda'><tr><td>ASTI: AUDITORIA Y SEGURIDAD DE TECNOLOGIA DE INFORMACION</td></h5>";
-            leyenda += "<h5 className='leyenda'><tr><td>DISI: DOCTORADO EN INGENIERIA DE SISTEMAS E INFORMATICA</td></h5>";
-            leyenda += "<h5 className='leyenda'><tr><td>GIC: GESTION DE LA INFORMACION Y DEL CONOCIMIENTO</td></h5>";
-            leyenda += "<h5 className='leyenda'><tr><td>GPTI: GERENCIA DE PROYECTOS DE TECNOLOGIA DE INFORMACION</td></h5>";
-            leyenda += "<h5 className='leyenda'><tr><td>GTI: GOBIERNO DE TECNOLOGIAS DE INFORMACION</td></h5>";
-            leyenda += "<h5 className='leyenda'><tr><td>GTIC: GESTION DE TECNOLOGIA DE INFORMACION Y COMUNICACIONES</td></h5>";
-            leyenda += "<h5 className='leyenda'><tr><td>ISW: INGENIERIA DE SOFTWARE</td></h>";
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>DISI: DOCTORADO EN INGENIERIA DE SISTEMAS E INFORMATICA</td></text></br>";
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>GTIC: GESTION DE TECNOLOGIA DE INFORMACION Y COMUNICACIONES</td></text></br>";
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>ISW: INGENIERIA DE SOFTWARE</td></text></br>";
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>GIC: GESTION DE LA INFORMACION Y DEL CONOCIMIENTO</td></text></br>";
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>GTI: GOBIERNO DE TECNOLOGIAS DE INFORMACION</td></text></br>";
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>GPTI: GERENCIA DE PROYECTOS DE TECNOLOGIA DE INFORMACION</td></text></br>";            
+            leyenda += "<text className='leyenda' style='font-size:12px'><tr><td>ASTI: AUDITORIA Y SEGURIDAD DE TECNOLOGIA DE INFORMACION</td></text>";
+
 
             this.setState({
                 miHtml: cadena,
@@ -541,7 +543,8 @@ class DemandaSocial extends Component {
                 <Tab label="Tabla">
                     <div className="panel row align-items-center" style={{paddingLeft:70}}>
                         <div className="panel-heading mt-3 mb-3">
-                            <h5 className="titulo">LEYENDA: {Parser(this.state.miLeyenda)} </h5>
+                            <h5 className="titulo">LEYENDA: </h5>
+                            {Parser(this.state.miLeyenda)} 
                             <hr></hr>
                             {aI == aF ? (<h4 className="titulo">Tabla de Datos - Demanda Social del año {this.props.anioIni}</h4>) : 
                             (<h4 className="titulo">Tabla de Datos - Demanda Social del {this.props.anioIni} al {this.props.anioFin}</h4>)}
@@ -549,9 +552,9 @@ class DemandaSocial extends Component {
                         <table className="table table-bordered table-striped col-md-11 mr-md-auto greenTable" >
                             <thead>
                                 <tr>
-                                    <th><b>Etiquetas</b></th>
+                                    <th><b><h4>Programas</h4></b></th>
                                     {Parser(this.state.cadenaAnios)} 
-                                    <th><b>Total General</b></th>
+                                    <th><b><h4>Total General</h4></b></th>
                                 </tr>
                             </thead>
                             <tbody>
