@@ -1,4 +1,4 @@
-/* App.js */
+﻿/* App.js */
 
 import React, { Component } from 'react';
 import { Tabs, Tab } from 'react-bootstrap-tabs';
@@ -91,7 +91,7 @@ class EstadoPermanencia extends Component {
 
 
     miFuncion() {
-        fetch('http://estadistica-sigap-backend.herokuapp.com/ApiController/programaAlumnos?fecha_inicio=' + this.state.anioini + '&fecha_fin=' + this.state.aniofin)//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
+        fetch('http://tallerbackend.herokuapp.com/ApiController/programaAlumnos?fecha_inicio=' + this.state.anioini + '&fecha_fin=' + this.state.aniofin)//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
             .then(async (response) => {
                 return await response.json();
             })
@@ -236,7 +236,7 @@ class EstadoPermanencia extends Component {
 
     miFuncion2() {
 
-        fetch('http://estadistica-sigap-backend.herokuapp.com/ApiController/programaAlumnosInverso?fecha_inicio=' + this.state.anioini + '&fecha_fin=' + this.state.aniofin)
+        fetch('http://tallerbackend.herokuapp.com/ApiController/programaAlumnosInverso?fecha_inicio=' + this.state.anioini + '&fecha_fin=' + this.state.aniofin)
             .then(async (response) => {
                 return await response.json();
             })

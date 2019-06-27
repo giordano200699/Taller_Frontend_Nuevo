@@ -1,4 +1,4 @@
-/* App.js */
+﻿/* App.js */
 
 import React, { Component } from 'react';
 import {Tabs, Tab} from 'react-bootstrap-tabs';
@@ -80,8 +80,8 @@ class ProgramaAlumnos extends Component {
     miFuncion(){
 
         //alert("SOY LLAMADO "+this.state.anioini+"  "+this.state.aniofin+"  -- "+this.props.anioFin );
-        //fetch('http://estadistica-sigap-backend.herokuapp.com/ApiController/listaConceptos?fecha_inicio='+this.state.anioini+'&fecha_fin='+this.state.aniofin)//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
-        fetch('http://estadistica-sigap-backend.herokuapp.com/ApiController/listaConceptos?fecha_inicio='+this.state.anioini+'&fecha_fin='+this.state.aniofin)
+        //fetch('http://tallerbackend.herokuapp.com/ApiController/listaConceptos?fecha_inicio='+this.state.anioini+'&fecha_fin='+this.state.aniofin)//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
+        fetch('http://tallerbackend.herokuapp.com/ApiController/listaConceptos?fecha_inicio='+this.state.anioini+'&fecha_fin='+this.state.aniofin)
         .then((response)=>{
             return response.json();
         })
@@ -127,7 +127,7 @@ class ProgramaAlumnos extends Component {
             });
         })
 
-        fetch('http://estadistica-sigap-backend.herokuapp.com/ApiController/demandaSocial?fecha_inicio='+this.state.anioini+'&fecha_fin='+this.state.aniofin)//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
+        fetch('http://tallerbackend.herokuapp.com/ApiController/demandaSocial?fecha_inicio='+this.state.anioini+'&fecha_fin='+this.state.aniofin)//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
         .then((response)=>{
             return response.json();
         })
@@ -227,7 +227,7 @@ class ProgramaAlumnos extends Component {
             console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB");
         }
     
-        fetch('http://estadistica-sigap-backend.herokuapp.com/ApiController/demandaSocial?fecha_inicio='+this.state.anioini+'&fecha_fin='+this.state.aniofin)//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
+        fetch('http://tallerbackend.herokuapp.com/ApiController/demandaSocial?fecha_inicio='+this.state.anioini+'&fecha_fin='+this.state.aniofin)//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
         .then((response)=>{
             return response.json();
         })
@@ -317,7 +317,7 @@ class ProgramaAlumnos extends Component {
     myColumnMulti(){
         
         ///hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
-        fetch('http://estadistica-sigap-backend.herokuapp.com/ApiController/listaConceptos?fecha_inicio='+this.state.anioini+'&fecha_fin='+this.state.aniofin)
+        fetch('http://tallerbackend.herokuapp.com/ApiController/listaConceptos?fecha_inicio='+this.state.anioini+'&fecha_fin='+this.state.aniofin)
         .then((response)=>{
             return response.json();
         })
@@ -367,7 +367,7 @@ class ProgramaAlumnos extends Component {
     myStackedColumn100(){
 
        //Hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
-        fetch('http://estadistica-sigap-backend.herokuapp.com/ApiController/listaConceptos?fecha_inicio='+this.state.anioini+'&fecha_fin='+this.state.aniofin)
+        fetch('http://tallerbackend.herokuapp.com/ApiController/listaConceptos?fecha_inicio='+this.state.anioini+'&fecha_fin='+this.state.aniofin)
         .then((response)=>{
             return response.json();
         })

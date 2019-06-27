@@ -1,4 +1,4 @@
-/* App.js */
+﻿/* App.js */
 
 import React, { Component } from 'react';
 import {Tabs, Tab} from 'react-bootstrap-tabs';
@@ -54,7 +54,7 @@ class Movilidad extends Component {
 
     miFuncion(){
 
-        fetch('http://estadistica-sigap-backend.herokuapp.com/ApiController/poblacionEstudiantil')//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
+        fetch('http://tallerbackend.herokuapp.com/ApiController/poblacionEstudiantil')//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
         .then((response)=>{
             return response.json();
         })
@@ -66,7 +66,7 @@ class Movilidad extends Component {
             });
         });
 
-        fetch('http://estadistica-sigap-backend.herokuapp.com/ApiController/poblacionDocente')//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
+        fetch('http://tallerbackend.herokuapp.com/ApiController/poblacionDocente')//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
         .then((response)=>{
             return response.json();
         })
