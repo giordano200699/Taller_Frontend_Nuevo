@@ -48,7 +48,9 @@ class PoblacionEstudiantil extends Component {
             miHtml2:'',
             imagen: null,
             cargoImagen:false,
-            esVisible:false
+            esVisible:false,
+
+            tipoGrafica : this.props.graficoMF
         };
         this.miFuncion = this.miFuncion.bind(this);
         this.miFuncion();
@@ -57,7 +59,7 @@ class PoblacionEstudiantil extends Component {
 
 
     miFuncion(){
-        fetch('http://tallerbackend.herokuapp.com/ApiController/poblacionEstudiantil?fecha_inicio='+this.state.anioini+'&fecha_fin='+this.state.aniofin)//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
+        fetch('http://estadistica-sigap-backend.herokuapp.com/ApiController/poblacionEstudiantil?fecha_inicio='+this.state.anioini+'&fecha_fin='+this.state.aniofin)//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
         .then((response)=>{
             return response.json();
         })
@@ -67,7 +69,7 @@ class PoblacionEstudiantil extends Component {
 
             var arregloDatos = [];
             var cadena1 = '<tr><th>Año</th>';
-            var cadena2 = '<tr><td>Total</td>';
+            var cadena2 = '<tr><td>Total Alumnos</td>';
 
             for(var i in result){
                 arregloDatos.push({y:parseInt(result[i]["count"]),label:result[i]["anio_ingreso"]});
@@ -92,7 +94,7 @@ class PoblacionEstudiantil extends Component {
                         shared: true
                     },
                     data: [{
-                        type: "spline",
+                        type: this.state.tipoGrafica,
                         name: "Población Estudiantil",
                         showInLegend: true,
                         dataPoints: arregloDatos
@@ -127,36 +129,51 @@ class PoblacionEstudiantil extends Component {
     }
 
     render() {
-        
+
         const aI = this.props.anioIni;
         const aF = this.props.anioFin;
 
+        if(this.props.anioFin!=this.state.aniofin || this.props.anioIni!=this.state.anioini || this.props.graficoMF != this.state.tipoGrafica){
+            this.setState({
+                aniofin: this.props.anioFin,
+                anioini: this.props.anioIni,
+                tipoGrafica: this.props.graficoMF
+            },() => {
+                this.miFuncion();
+            });
+        }
+        
         return (
             <div>
                 <Tabs align="center" >
                     <Tab label="Tabla">
-                        <div class="panel row align-items-center">
-                        <div className="panel-heading mt-3 mb-3">
-                            <h5 className="titulo">LEYENDA: </h5>
-                            {/*Parser(this.state.miLeyenda)*/}
-                            <hr></hr>
-                            {aI == aF ? (<h4 className="titulo">Tabla de Datos - Población Estudiantil del año {this.props.anioIni}</h4>) : 
-                            (<h4 className="titulo">Tabla de Datos - Poblacón Estudiantil del {this.props.anioIni} al {this.props.anioFin}</h4>)}
-                        </div> 
-                            <table className="table table-bordered table-striped col-md-11 mr-md-auto greenTable">
-                                <thead>
-                                    {Parser(this.state.miHtml)}  
-                                </thead>
-                                <tbody>
-                                    {Parser(this.state.miHtml2)}                            
-                                </tbody>
-                            </table>          
+                        <div class="panel row"  style={{alignItems:'center',justifyContent:'center'}}>
+                            <div class="panel-heading">                               
+                                <div  class="row" style={{alignItems:'center', justifyContent:'center', marginTop:20}}>
+                                    <div className="col-md-12 ">
+                                        <h5 className="titulo" align="center">Poblacion Estudiantil</h5>
+                                    </div>
+                                    {aI == aF ? (<div className="titulo col-md-12" align="center">Espacio Temporal: {this.props.anioIni}</div>) : 
+                                    (<div className="titulo col-md-12" align="center" >Espacio Temporal: {this.props.anioIni} al {this.props.anioFin}</div>)}
+                                </div>
+                                <br/>
+                            </div>
+                            <div className="col-md-10" style={{marginTop:20}}>
+                                <table className="table table-bordered col-md-11 mr-md-auto TablaEstadisticaAzul">
+                                    <thead>
+                                        {Parser(this.state.miHtml)}  
+                                    </thead>
+                                    <tbody>
+                                        {Parser(this.state.miHtml2)}                            
+                                    </tbody>
+                                </table>
+                            </div>          
                         </div>
                     </Tab>
                     <Tab label="Grafico">
                     <div class="panel row align-items-center">
                         <div class="panel-heading mt-3 mb-3">
-                            <h4 class="panel-title titulo">Grafica de Población Estudiantil</h4>
+                            <h4 style={{marginLeft:60}}  class="panel-title titulo">Grafica de Población Estudiantil</h4>
                         </div>
                         <div class="panel-body col-md-11 mr-md-auto ml-md-auto">
                             <CanvasJSChart options = {(this.state.isChartLoaded) ? this.state.data : (null)} />
@@ -178,26 +195,38 @@ class PoblacionEstudiantil extends Component {
                 </Tabs>
 
                 <div style={this.state.esVisible?null:{display:'none'}} id="copia">
-                    
-                    <div class="panel row align-items-center" style={{marginLeft:80}}>
-                        <div class="panel-heading mt-3 mb-3">
-                            <h4 class="panel-title titulo">Tabla de Población Estudiantil</h4>
+
+                    <img src="encabezado2.png" height="250" style={{marginLeft:30,marginTop:-20}}/>
+                                
+                    <div class="panel row"  style={{alignItems:'center',justifyContent:'center'}}>
+                        
+                        <div  class="row" style={{alignItems:'center',justifyContent:'center', marginTop:15}}>                                    
+                            <div className="col-md-12 ">
+                                <h5 className="tituloPDF" align="center"> Poblacion Estudiantil</h5>
+                            </div>
+                            {aI == aF ? (<div className="subtituloPDF col-md-12" align="center">Espacio Temporal: {this.props.anioIni}</div>) : 
+                            (<div className="subtituloPDF col-md-12" align="center" >Espacio Temporal: {this.props.anioIni} al {this.props.anioFin}</div>)}
                         </div>
-                        <table className="table table-bordered table-striped col-md-11 mr-md-auto greenTable">
-                            <thead>
-                                {Parser(this.state.miHtml)}  
-                            </thead>
-                            <tbody>
-                                {Parser(this.state.miHtml2)}                            
-                            </tbody>
-                        </table>          
+
+                        <div className="col-md-10" style={{marginTop:20}}>
+                            <table className="table table-bordered col-md-10 TablaEstadisticaAzul">
+                                <thead>
+                                    {Parser(this.state.miHtml)}  
+                                </thead>
+                                <tbody>
+                                    {Parser(this.state.miHtml2)}                            
+                                </tbody>
+                            </table>                    
+                        </div>       
                     </div>
 
                     <div class="panel row align-items-center" style={{marginLeft:80}}>
-                        <div class="panel-heading mt-3 mb-3">
-                            <h4 class="panel-title titulo">Grafica de Población Estudiantil</h4>
+                        <div className="col-md-3" >
+                            <hr></hr>
+                            <h5 style={{marginLeft:60}} className="titulo">Gráficas: </h5>
+                            <hr></hr>
                         </div>
-                        <div class="panel-body col-md-11 mr-md-auto ml-md-auto">
+                        <div class="panel-body col-md-10 mr-md-auto ml-md-auto">
                             <CanvasJSChart options = {(this.state.isChartLoaded) ? this.state.data : (null)} />
                         </div>           
                     </div>

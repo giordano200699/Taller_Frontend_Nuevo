@@ -13,7 +13,7 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 //import Formulario from "./../../componentes/formulario";
 import './index.css';
 import App from '../../App';
-import DemandaSocial from '../DemandaSocial/DemandaSocial';
+import EstadoPermanencia from '../EstadoPermanencia/EstadoPermanencia';
 import Movilidad from './../Movilidad/Movilidad';
 import RelacionAlumnos from './../RelacionAlumnos/RelacionAlumnos';
 import ProgramaAlumnos from './../ProgramaAlumnos/ProgramaAlumnos';
@@ -25,7 +25,7 @@ import Parser from 'html-react-parser';
 let opcionGlobal = 1;
 let AnioIni = 2014;
 let AnioFin = 2018;
-let Grafico = "columnMulti";
+let Grafico = "columnasMultiples";
 
 
 class Index extends Component {
@@ -38,7 +38,8 @@ class Index extends Component {
             periodo:2009,
             anioini:2014,
             aniofin:2018,
-            htmlGrafica:''
+            htmlGrafica:'',
+            grafico:'columnasMultiples'
         };
         this.handleChangeOpcion = this.handleChangeOpcion.bind(this);
         this.handleChangeOpcionFiltro = this.handleChangeOpcionFiltro.bind(this);
@@ -53,8 +54,39 @@ class Index extends Component {
     }
 
     handleChangeOpcion(event) { // cambiar opcion
+        var cadenaGrafica='';
+        var primeraGrafica='';
+        if(event.target.value==3){
+            // cadenaGrafica = '<option value="pie">Pie</option>';
+            // cadenaGrafica += '<option value="pyramid">Pirámide</option>';
+            // cadenaGrafica += '<option value="funnel">Funeral</option>';
+            // primeraGrafica = "pie";
+            cadenaGrafica = '<option value="columnasMultiples">Columnas Mútliples</option>';
+            cadenaGrafica +='<option value="barrasHMultiples">Barras H Múltiples</option>';
+            cadenaGrafica +='<option value="splineMultiple">Spline Múltiple</option>';
+            primeraGrafica = "columnasMultiples";
+        }else if(event.target.value==1){
+            cadenaGrafica = '<option value="columnasMultiples">Columnas Mútliples</option>';
+            cadenaGrafica +='<option value="barrasHMultiples">Barras H Múltiples</option>';
+            cadenaGrafica +='<option value="splineMultiple">Spline Múltiple</option>';
+            primeraGrafica = "columnasMultiples";
+        }else if(event.target.value==4){
+            cadenaGrafica = '<option value="column">Columnas Mútliples</option>';
+            cadenaGrafica +='<option value="bar">Barras H Múltiples</option>';
+            cadenaGrafica +='<option value="spline">Spline Múltiple</option>';
+            primeraGrafica = "column";
+        }else if(event.target.value==5){
+            cadenaGrafica = '<option value="column">Columnas</option>';
+            cadenaGrafica +='<option value="bar">Barras H</option>';
+            cadenaGrafica +='<option value="spline">Spline</option>';
+            primeraGrafica = "column";
+        }
+        
+
         this.setState({
-            opcion: event.target.value
+            opcion: event.target.value,
+            htmlGrafica:cadenaGrafica,
+            grafico : primeraGrafica
         });
     }
 
@@ -135,9 +167,9 @@ class Index extends Component {
                                 <div className="form-group">
                                     <label>Tipo:</label>
                                     <select className="form-control" value={this.state.opcion} onChange={this.handleChangeOpcion}>
-                                        <option value="1">Demanda Social</option>
-                                        <option value="3">Relación de Alumnos</option>
-                                        <option value="4">Programa Alumnos</option>
+                                        <option value="4">Demanda Social</option>
+                                        <option value="1">Estado de Permanencia</option>
+                                        <option value="3">Estado de Permanencia General</option>
                                         <option value="5">Población Estudiantil</option>
                                         <option disabled value="2">Movilidad</option>
                                     </select>
@@ -200,7 +232,7 @@ class Index extends Component {
 
 function miFuncion(){
     if(opcionGlobal == 1){
-        return(<DemandaSocial  anioIni={AnioIni} anioFin ={AnioFin} graficoMF={Grafico}/>)
+        return(<EstadoPermanencia  anioIni={AnioIni} anioFin ={AnioFin} graficoMF={Grafico}/>)
     }else if(opcionGlobal == 2){
         return(<Movilidad anioIni={AnioIni} anioFin ={AnioFin} graficoMF={Grafico}/>)
     }else if(opcionGlobal == 3){

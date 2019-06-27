@@ -54,7 +54,7 @@ class Movilidad extends Component {
 
     miFuncion(){
 
-        fetch('http://tallerbackend.herokuapp.com/ApiController/poblacionEstudiantil')//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
+        fetch('http://estadistica-sigap-backend.herokuapp.com/ApiController/poblacionEstudiantil')//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
         .then((response)=>{
             return response.json();
         })
@@ -66,7 +66,7 @@ class Movilidad extends Component {
             });
         });
 
-        fetch('http://tallerbackend.herokuapp.com/ApiController/poblacionDocente')//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
+        fetch('http://estadistica-sigap-backend.herokuapp.com/ApiController/poblacionDocente')//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
         .then((response)=>{
             return response.json();
         })

@@ -46,214 +46,393 @@ class RelacionAlumnos extends Component {
             listaConceptosEncontrados : "", //usado para saber que conceptos se encontraron en la consulta,
             data: {},
             miHtml: '',
+            miHtml2:'',
             imagen: null,
-            miLeyenda: "",
             cargoImagen:false,
-            esVisible:false
+            esVisible:false, 
+            htmlGrafica: '',
+            banderaCarga : false,
+            myleyenda: '',
+
+            graficasCargadas : false,
+            inicioRelativo : ''+this.props.anioIni,
+            finRelativo: ''+this.props.anioFin,
+            tipoGrafica: 'column',
+            tipoGraficaVerificador : this.props.graficoMF,
+
+            
+            imagen1: null,
+            cargoImagen1:false,
+            imagen2:null,
+            cargoImagen2:false,
         };
         this.miFuncion = this.miFuncion.bind(this);
         this.miFuncion();
+        this.miFuncion2 = this.miFuncion2.bind(this);
+        this.miFuncion2();
+
+        
 
     }
 
 
     miFuncion(){
-        fetch('http://tallerbackend.herokuapp.com/ApiController/relacionAlumnos?fecha_inicio='+this.state.anioini+'&fecha_fin='+this.state.aniofin)//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
+        fetch('http://estadistica-sigap-backend.herokuapp.com/ApiController/programaAlumnos?fecha_inicio='+this.state.anioini+'&fecha_fin='+this.state.aniofin)//hace el llamado al dominio que se le envió donde retornara respuesta de la funcion
         .then((response)=>{
             return response.json();
         })
         .then((result)=>{
 
-            //console.log(result);
-
-            var arregloDatos = [];
-            var suma=0;
             var cadena = '';
-            let leyenda = "";
-            for(var i in result){
-                suma= suma+parseInt(result[i]["count"]);
-            }
-            for(var i in result){
-                cadena= cadena+'<tr>';
-                //cadena= cadena+'<td>'+result[i]["cod_perm"]+'</td>';
-                switch(result[i]["cod_perm"]){
-                    case 'AC':
-                        cadena= cadena+'<td>Activo</td>';
-                        break;
-                    case 'G':
-                        cadena= cadena+'<td>Graduado</td>';
-                        break;
-                    case 'X':
-                        cadena= cadena+'<td>Expulsado</td>';
-                        break;
-                    case 'RM':
-                        cadena= cadena+'<td>Reserva</td>';
-                        break;
-                    case 'INAC':
-                        cadena= cadena+'<td>Inactivo</td>';
-                        break;
-                    case 'AI':
-                        cadena= cadena+'<td>Ingreso Anulado</td>';
-                        break;
-                    case 'E':
-                        cadena= cadena+'<td>Egresado</td>';
-                        break;
-                    case 'A':
-                        cadena= cadena+'<td>Abandono</td>';
-                        break; 
+            var cadena2 = '';
+            var leyenda = "";
+
+            for(var tipo in result){
+                var contador = 1;
+                var sumaVertical = [];
+                for(var i = this.state.anioini;i<=this.state.aniofin;i++){
+                    sumaVertical[i] = 0;
                 }
-                cadena= cadena+'<td>'+parseInt(result[i]["count"])+'</td>';
-                //cadena= cadena+'<td>'+Math.round((parseInt(result[i]["count"])/suma)*10000)/10000+'</td>';
-                cadena= cadena+'<td>'+Math.round((parseInt(result[i]["count"])/suma)*10000)/100+'%</td>';
-                arregloDatos.push({y:parseInt(result[i]["count"]),label:result[i]["cod_perm"],porcentaje:Math.round((parseInt(result[i]["count"])/suma)*10000)/100});
-                cadena= cadena+'</tr>';
+                sumaVertical['total']=0;
+                
+                for(var anio in result[tipo]){
+                    
+                    if(contador==1){
+                        cadena += '<tr><td style="vertical-align: middle; border-bottom-width: 3px;" rowspan="'+(Object.keys(result[tipo]).length+1)+'">'+tipo+'</td>';
+                    }else{
+                        cadena += '<tr>';
+                    }
+                     
+                    cadena += '<td style="border-left-width: 3px">'+anio+'</td>';
+
+                    var sumaHorizontal =0;
+                    
+                    for(var i = this.state.anioini;i<=this.state.aniofin;i++){
+                        if(result[tipo][anio][i]){
+                            //cadena+='<td  style="border-width: 3px">'+result[tipo][anio][i]+'</td>';
+                            sumaHorizontal += result[tipo][anio][i];
+                            sumaVertical[i] += result[tipo][anio][i];
+                        }
+                    }
+                    cadena+='<td >'+sumaHorizontal+'</td>';
+                    sumaVertical['total']+=sumaHorizontal;
+                    cadena+='</tr>';
+                    contador++;
+                }
+                cadena += '<tr><td style="border-bottom-width: 3px; border-left-width: 3px;">Total</td>';
+                cadena+='<th style="border-bottom-width: 3px">'+sumaVertical['total']+'</th>'
+                cadena +='</tr>';
             }
-            cadena= cadena+'<tr><td>Total</td><td>'/*Total</td><td>'*/+suma+'</td><td>100%</td></tr>';
+
+            cadena2+='<th>Total</th>';
+
+             //Aqui se llena los datos de la leyenda
+  
+             leyenda += "<hr></hr>"
+             leyenda += "<text className='leyenda'><tr><td>DISI: Doctorado en Ingeniería de Sistemas e Informática</td></text></br>";
+             leyenda += "<text className='leyenda'><tr><td>GTIC: Gestión de tecnología de información y comunicaciones</td></text></br>";
+             leyenda += "<text className='leyenda'><tr><td>ISW: Ingeniería de Software</td></text></br>";
+             leyenda += "<text className='leyenda'><tr><td>GIC: Gestión de la información y del conocimiento</td></text></br>";
+             leyenda += "<text className='leyenda'><tr><td>GTI: Gobierno de tecnologías de información</td></text></br>";
+             leyenda += "<text className='leyenda'><tr><td>GPTI: Gerencia de proyectos de tecnología de información</td></text></br>";
+             leyenda += "<text className='leyenda'><tr><td>ASTI: Auditoria y seguridad de tecnología de información</td></text>";
 
 
+
+            leyenda += "<hr></hr>"
+
+            leyenda +=  "<text className='leyenda'><tr><td>AC: Activo</td></text></br>";
+            leyenda +=  "<text className='leyenda'><tr><td>G: Graduado</td></text></br>";
+            leyenda +=  "<text className='leyenda'><tr><td>RM: Reserva</td></text></br>";
+            leyenda +=  "<text className='leyenda'><tr><td>INAC: Inactivo</td></text></br>";
+            leyenda +=  "<text className='leyenda'><tr><td>AI: Ingreso anulado</td></text></br>";
+            leyenda +=  "<text className='leyenda'><tr><td>AC: Egresado</td></text>";
+
+
+            //console.log(result);
             this.setState({
                 isChartLoaded : true,
-                data: {
-                    exportEnabled: true,
-                    animationEnabled: true,
-                    title: {
-                        text: "Relación Alumnos"
-                    },
-                    data: [{
-                        type: "pie",
-                        startAngle: 75,
-                        toolTipContent: "<b>{label}</b>: {y}",
-                        showInLegend: "true",
-                        legendText: "{label}",
-                        indexLabelFontSize: 16,
-                        indexLabel: "{label} - {porcentaje}%",
-                        dataPoints: arregloDatos
-                    }]
-                },
-                miHtml: cadena,
-                miLeyenda: leyenda
+                miHtml:cadena2,
+                miHtml2:cadena,
+                myleyenda:leyenda
             },()=>{
-                this.setState({
-                    esVisible:true
-                },()=>{
-                    const input = document.getElementById('copia');
-                    html2canvas(input)
-                    .then((canvas2) => {
-                        const imgData = canvas2.toDataURL('image/png');
-                        this.setState({
-                            imagen : imgData,
-                            cargoImagen:true
-                        },()=>{
-                            this.setState({
-                                esVisible:false
-                            });
-                        });
-                        
-                        
+                const input = document.getElementById('tabla');
+                html2canvas(input)
+                .then((canvas) => {
+                    const imgData = canvas.toDataURL('image/png');
+                    this.setState({
+                        imagen1 : imgData,
+                        cargoImagen1:true
+                    },()=>{
                     });
                 });
+            });
 
+        })
+    }
+
+    miFuncion2(){
+        
+        fetch('http://estadistica-sigap-backend.herokuapp.com/ApiController/demandaInversa?fecha_inicio='+this.state.anioini+'&fecha_fin='+this.state.aniofin)
+        .then((response)=>{
+            return response.json();
+        })
+        .then((result2)=>{
+
+            var arregloData = [];
+            
+            var bandera = false;
+            var anioInicioRelativo; 
+            var anioUltimoRelativo;
+            
+            for(var anio in result2){
+                if(!bandera){
+                    anioInicioRelativo = anio;
+                    bandera = true;
+                }
+                anioUltimoRelativo = anio;
+                var nuevaData = [];
+
+                for(var estado in result2[anio]){
+                    var miniArreglo = [];
+                    for(var tipo in result2[anio][estado]){
+                        miniArreglo.push({ label: tipo, y: result2[anio][estado][tipo] });
+                    }
+                    nuevaData.push({
+                        type: this.state.tipoGrafica,
+                        name: estado,
+                        legendText: estado,
+                        showInLegend: true, 
+                        dataPoints:miniArreglo
+                    });
+                }
+
+                arregloData.push(
+                    {
+                        animationEnabled: true,
+                        title:{
+                            text: "Estado de Permanencia - "+anio
+                        },	
+                        axisY: {
+                            title: "Número de Alumnos",
+                            titleFontColor: "#4F81BC",
+                            lineColor: "#4F81BC",
+                            labelFontColor: "#4F81BC",
+                            tickColor: "#4F81BC"
+                        },	
+                        toolTip: {
+                            shared: true
+                        },
+                        legend: {
+                            cursor:"pointer"
+                        },
+                        data: nuevaData
+                    }
+                );
+
+            }
+
+
+            //console.log(result);
+            this.setState({
+                data: arregloData,
+                inicioRelativo: anioInicioRelativo,
+                finRelativo: anioUltimoRelativo
+
+            },()=>{
                 
+                this.setState({
+                    graficasCargadas:true
+                });
             });
         })
     }
 
     render() {
 
-         if(this.props.anioFin!=this.state.aniofin || this.props.anioIni!=this.state.anioini){
-            this.setState({
-                aniofin: this.props.anioFin,
-                anioini: this.props.anioIni
-            },() => {
-                this.miFuncion();
-            });
-        }
-        
         const aI = this.props.anioIni;
         const aF = this.props.anioFin;
 
-        return (
+        if(this.props.anioFin!=this.state.aniofin || this.props.anioIni!=this.state.anioini || this.state.tipoGraficaVerificador!=this.props.graficoMF){
+            var tipoCadena = '';
+            if(this.props.graficoMF=="columnasMultiples"){
+                tipoCadena = 'column';
+            }else if(this.props.graficoMF=="barrasHMultiples"){
+                tipoCadena = 'bar';
+            }else if(this.props.graficoMF=="splineMultiple"){
+                tipoCadena = 'spline';
+            }
+            
+            this.setState({
+                aniofin: this.props.anioFin,
+                anioini: this.props.anioIni,
+                tipoGraficaVerificador: this.props.graficoMF,
+                tipoGrafica: tipoCadena,
+                banderaCarga:false,
+                graficasCargadas:false,
+                cargoImagen1:false,
+                cargoImagen2:false
 
-            <div>
-                <Tabs align="center" >
-                    <Tab label="Tabla">
-                        <div class="panel row align-items-center">
-                        <div className="panel-heading mt-3 mb-3">
-                            <h5 className="titulo">LEYENDA: </h5>
-                            {/*Parser(this.state.miLeyenda)*/} 
-                            <hr></hr>
-                            {aI == aF ? (<h4 className="titulo">Tabla de Datos - Relación de alumnos {this.props.anioIni}</h4>) : 
-                            (<h4 className="titulo">Tabla de Datos - Relación de alumnos del {this.props.anioIni} al {this.props.anioFin}</h4>)}
-                        </div>  
-                            <table className="table table-bordered table-striped col-md-11 mr-md-auto greenTable">
-                                <thead>
-                                    <tr>
-                                        {/*<th><h4>Clave</h4></th>*/}
-                                        <th><h4>Condición</h4></th>
-                                        <th><h4>Total</h4></th>
-                                        <th><h4>Porcentaje</h4></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                          {Parser(this.state.miHtml)}                            
-                                </tbody>
-                            </table>          
-                        </div>
-                    </Tab>
-                    <Tab label="Grafico">
+            },() => {
+                this.miFuncion();
+                this.miFuncion2();
+            });
+        }
+        
+        if(this.state.isChartLoaded && this.state.graficasCargadas && Object.keys(this.state.data).length!=0  && this.state.banderaCarga != this.state.isChartLoaded){
+            let etiqueta = []
+            var iterador = 0;
+            for(var i = this.state.inicioRelativo;i<=this.state.finRelativo;i++){
+                etiqueta.push(
                     <div class="panel row align-items-center">
-                        <div class="panel-heading mt-3 mb-3">
-                            <h4 class="panel-title titulo">Grafica de Relación de Alumnos</h4>
-                        </div>
-                        <div class="panel-body col-md-11 mr-md-auto ml-md-auto">
-                            <CanvasJSChart options = {(this.state.isChartLoaded) ? this.state.data : (null)} />
+                        <div class="panel-body col-md-11 mr-md-auto ml-md-auto" style={{marginBottom: 50}}>
+                            <CanvasJSChart options = {this.state.data[iterador]} />
                         </div>           
                     </div>
+                );
+                iterador++;
+            }
+            
+            this.setState({
+                htmlGrafica: etiqueta,
+                banderaCarga: true
+            },()=>{
+                setTimeout (()=>{
+                    const input2 = document.getElementById('graficax');
+                    html2canvas(input2)
+                    .then((canvas2) => {
+                        const imgData2 = canvas2.toDataURL('image/png');
+                        this.setState({
+                            imagen2 : imgData2,
+                            cargoImagen2:true
+                        },()=>{
+                        });
+                        
+                        
+                    });
+                }, 2000); 
+                
+            })
+        }
+        
+        
+        return (
+
+            
+
+        <div>    
+            <Tabs align="center" >
+                    <Tab label="Tabla">
+                        <div class="panel row" style={{alignItems:'center',justifyContent:'center'}}>
+                            <div class="panel-heading"  >
+                                <div  class="row" style={{alignItems:'center', justifyContent:'center', marginTop:20}}>
+                                    <div className="col-md-12 ">
+                                        <h5 className="titulo" align="center"> Estado de permanencia en los Programas de Posgrado (General)</h5>
+                                    </div>
+                                    {aI == aF ? (<div className="titulo col-md-12" align="center">Espacio Temporal: {this.props.anioIni}</div>) : 
+                                    (<div className="titulo col-md-12" align="center" >Espacio Temporal: {this.props.anioIni} al {this.props.anioFin}</div>)}
+                                </div>
+                                <br/>
+                            </div>
+                            <div className="col-md-9" style={{marginTop:20}}>
+                                <table className="table table-bordered col-md-10 TablaEstadisticaAzul">
+                                    <thead>
+                                        
+                                        <th>Programa</th>
+                                        <th>Estado</th>
+                                        {Parser(this.state.miHtml)} 
+                                        
+                                    </thead>
+                                    <tbody>
+                                        {Parser(this.state.miHtml2)}                            
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div className="col col-md-11">
+                                <hr></hr>
+                                <h5 style={{marginLeft:10, fontSize:13}} className="subtitulo">Leyenda: </h5> 
+                                {Parser(this.state.myleyenda)} 
+                              
+                            </div>    
+                    </div>
                     </Tab>
+                    <Tab label="Grafico">
+                        <div class="panel row align-items-center">
+                            <div className="panel-heading mt-3 mb-3" >
+                                <h5 style={{marginLeft:10}} className="titulo">Gráficas: </h5>
+                                <hr></hr>
+                            </div>
+                            <div className="panel-body col-md-11 mr-md-auto ml-md-auto ">
+                                {this.state.banderaCarga? this.state.htmlGrafica : null}
+                            </div>
+                        </div>
+                    </Tab>
+
                     <Tab label="Visualizar PDF" >
                         <div className="panel row align-items-center" >
                             <div className="panel-heading mt-3 mb-3">
                                 <h4 style={{marginLeft:60}} className="titulo">Visualizar PDF</h4>
                             </div>
                             <div className="panel-body col-md-11 mr-md-auto ml-md-auto">
-                                {this.state.cargoImagen?<Pdf imagen={this.state.imagen}></Pdf>:null}
+                            {this.state.cargoImagen1&&this.state.cargoImagen2?<Pdf imagen={this.state.imagen1} imagen2={this.state.imagen2}></Pdf>:null}
                                 
                             </div>           
                         </div>
                     </Tab>
                 </Tabs>
 
-                <div style={this.state.esVisible?null:{display:'none'}} id="copia">
-                    <div class="panel row align-items-center" style={{marginLeft:80}}>
-                        <div class="panel-heading mt-3 mb-3">
-                            <h4 class="panel-title titulo">Tabla de Relación de Alumnos</h4>
-                        </div>
-                        <table className="table table-bordered table-striped col-md-11 mr-md-auto greenTable">
-                            <thead>
-                                <tr>
-                                    <th>Clave</th>
-                                    <th>Etiquetas</th>
-                                    <th>Total</th>
-                                    <th>Porcentaje</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                        {Parser(this.state.miHtml)}                            
-                            </tbody>
-                        </table>          
-                    </div>
+                <div style={this.state.cargoImagen1&&this.state.cargoImagen2&&this.state.banderaCarga?{display:'none'}:null} id="copia">
+                    
+                        <div  id="tabla" style={{marginTop:0}} class="row justify-content-md-center">
+                            
+                            <img src="encabezado2.png" height="250" style={{marginLeft:30,marginTop:-20}}/>
+                                
+                            <div class="panel row"  style={{alignItems:'center',justifyContent:'center'}}>
+                                
+                                <div  class="row" style={{alignItems:'center',justifyContent:'center', marginTop:15}}>                                    
+                                    <div className="col-md-12 ">
+                                        <h5 className="tituloPDF" align="center"> Estado de permanencia en los Programas de Posgrado (General)</h5>
+                                    </div>
+                                    {aI == aF ? (<div className="subtituloPDF col-md-12" align="center">Espacio Temporal: {this.props.anioIni}</div>) : 
+                                    (<div className="subtituloPDF col-md-12" align="center" >Espacio Temporal: {this.props.anioIni} al {this.props.anioFin}</div>)}
+                                </div>
+                            
+                            <div className="col-md-9" style={{marginTop:20}}>
+                                <table className="table table-bordered col-md-10 TablaEstadisticaAzul">
+                                    <thead>
+                                        
+                                        <th>Programa</th>
+                                        <th>Estado</th>
+                                        {Parser(this.state.miHtml)} 
+                                        
+                                    </thead>
+                                    <tbody>
+                                        {Parser(this.state.miHtml2)}                            
+                                    </tbody>
+                                </table>
+                            </div>
 
-                    <div class="panel row align-items-center"  style={{marginLeft:80}}>
-                        <div class="panel-heading mt-3 mb-3">
-                            <h4 class="panel-title titulo">Grafica de Relación de Alumnos</h4>
+                            <div className="col col-md-10">
+                                <hr></hr>
+                                <h5 style={{marginLeft:10}} className="titulo2PDF">Leyenda: </h5> 
+                                {Parser(this.state.myleyenda)} 
+                            
+                            </div>  
+                            </div>     
                         </div>
-                        <div class="panel-body col-md-11 mr-md-auto ml-md-auto">
-                            <CanvasJSChart options = {(this.state.isChartLoaded) ? this.state.data : (null)} />
-                        </div>           
-                    </div>
+
+                        <div class="panel row align-items-center" id="graficax" style={{marginTop:0}}>
+                            <div className="col-md-3" >
+                                <hr></hr>
+                                <h5 style={{marginLeft:60}} className="titulo">Gráficas: </h5>
+                                <hr></hr>
+                            </div>
+                            <div className="panel-body col-md-11 mr-md-auto ml-md-auto ">
+                                {this.state.banderaCarga? this.state.htmlGrafica : null}
+                            </div>
+                        </div>
                 </div>
-            </div>
-
+        </div>
         );
     }
 }
